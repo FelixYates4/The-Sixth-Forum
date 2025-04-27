@@ -1,0 +1,5 @@
+cd C:\Users\felix\OneDrive\Desktop\Sixth Forum\The-Sixth-Forum
+
+node server.js
+
+cloudflared tunnel --config C:\Users\felix\.cloudflared\config.yml run
