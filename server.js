@@ -9,14 +9,11 @@ const app = express();
 const port = 3000;
 const db = new sqlite3.Database('./database.db');
 
-// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Database initialization
 db.serialize(() => {
-  // Users table
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,7 +24,6 @@ db.serialize(() => {
     )
   `);
 
-  // Subjects table
   db.run(`
     CREATE TABLE IF NOT EXISTS subjects (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,7 +31,6 @@ db.serialize(() => {
     )
   `);
 
-  // Posts table (updated with subject_id)
   db.run(`
     CREATE TABLE IF NOT EXISTS posts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -48,7 +43,6 @@ db.serialize(() => {
     )
   `);
 
-  // Replies table
   db.run(`
     CREATE TABLE IF NOT EXISTS replies (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,7 +54,6 @@ db.serialize(() => {
     )
   `);
 
-  // Insert default subjects if empty
   const defaultSubjects = ['Mathematics', 'Science', 'History', 'English', 'Programming', 'Other'];
   db.get("SELECT COUNT(*) as count FROM subjects", (err, row) => {
     if (row.count === 0) {
@@ -71,7 +64,6 @@ db.serialize(() => {
   });
 });
 
-// Routes
 app.get('/api/subjects', (req, res) => {
   db.all('SELECT * FROM subjects', [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -189,15 +181,7 @@ app.post('/api/login', async (req, res) => {
   });
 });
 
-// Start server
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`Server running at http://localhost:${port}`);
-  console.log('Available endpoints:');
-  console.log('- POST /api/register');
-  console.log('- POST /api/login');
-  console.log('- GET /api/subjects');
-  console.log('- GET /api/posts');
-  console.log('- POST /api/posts');
-  console.log('- GET /api/posts/:id/replies');
-  console.log('- POST /api/posts/:id/replies');
 });
+

@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // DOM Elements
     const postsContainer = document.getElementById('posts-container');
     const authContainer = document.getElementById('auth-container');
     const authModal = document.getElementById('authModal');
@@ -13,16 +12,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const createPostBtn = document.getElementById('createPostBtn');
     const sortButtons = document.querySelectorAll('.sort-btn');
   
-    // State
     let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
     let subjects = [];
     let currentFilter = 'all';
     let currentSort = 'new';
   
-    // Initialize
     initApp();
   
-    // Event Listeners
     loginForm.addEventListener('submit', handleLogin);
     signupForm.addEventListener('submit', handleSignup);
     postForm.addEventListener('submit', handlePostSubmit);
@@ -38,7 +34,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   
-    // Functions
     async function initApp() {
       await loadSubjects();
       updateAuthUI();
