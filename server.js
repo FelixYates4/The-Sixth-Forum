@@ -198,26 +198,33 @@ app.get('/api/replies', async (req, res) => {
     }
 });
 
-app.post('/api/posts', [
-    validatePostTitle,
-    validatePostContent,
-    body('subject_id').isInt().withMessage('Invalid subject')
-], async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+app.post('/api/posts', async (req, res) => {
+  try {
+    const { title, content, author, subject_id } = req.body;
+    
+    // Enhanced validation
+    if (!title || !content || !author || !subject_id) {
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    try {
-        const { title, content, author, subject_id } = req.body;
-        const result = await dbRun(
-            'INSERT INTO posts (title, content, author, subject_id) VALUES (?, ?, ?, ?)',
-            [title, content, author, subject_id]
-        );
-        res.json({ id: result.lastID });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+    const subjectId = parseInt(subject_id);
+    if (isNaN(subjectId)) {
+      return res.status(400).json({ error: 'Invalid subject ID' });
     }
+
+    const result = await dbRun(
+      'INSERT INTO posts (title, content, author, subject_id) VALUES (?, ?, ?, ?)',
+      [title, content, author, subjectId]
+    );
+    
+    res.json({ id: result.lastID });
+  } catch (err) {
+    console.error('Post creation error:', err);
+    res.status(500).json({ 
+      error: 'Failed to create post',
+      details: err.message 
+    });
+  }
 });
 
 app.post('/api/posts/:id/replies', [
